@@ -11,6 +11,8 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.squareup.picasso.Picasso;
+
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -49,18 +51,9 @@ public class ChildRecyclerViewAdapter extends RecyclerView.Adapter<ChildRecycler
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
         ChildModel currentItem = childModelArrayList.get(position);
-        try {
-            URL url = new URL(currentItem.getHeroImage());
-            //URL url = new URL("https://lh3.googleusercontent.com/7Nz4Fic8IguijBDMBVsuRF7ZIbhNJmlqCksR5MV0djhHCvoo699St3EAgdJ8U2ZZqxk8jX8NjBFwFaCYwOUIbaoB02IBm0RRnAJ-2GSRyXLyoDCUe2Xf4DmFn86jzyfW=w1280");
-            HttpURLConnection urlcon = (HttpURLConnection) url.openConnection();
-            urlcon.setDoInput(true);
-            urlcon.connect();
-            InputStream in = urlcon.getInputStream();
-            Bitmap mIcon = BitmapFactory.decodeStream(in);
-            holder.heroImage.setImageBitmap(mIcon);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        Picasso.with(cxt)
+                .load(currentItem.getHeroImage())
+                .into(holder.heroImage);
         //holder.heroImage.setImageResource(currentItem.getHeroImage());
         holder.movieName.setText(currentItem.getMovieName());
 

@@ -32,7 +32,6 @@ public class ParentRecyclerViewAdapter extends RecyclerView.Adapter<ParentRecycl
     String album=" ",image=" ",name=" ";
     ChildRecyclerViewAdapter childRecyclerViewAdapter;
     private RecyclerView.LayoutManager childLM;
-    ArrayList<ChildModel> arrayList;
 
 
 
@@ -76,18 +75,19 @@ public class ParentRecyclerViewAdapter extends RecyclerView.Adapter<ParentRecycl
 
         name=currentItem.movieCategory();
         holder.category.setText(name);
-        arrayList = new ArrayList<>();
 
         mStorageRef = FirebaseStorage.getInstance().getReference(name);
         mStorageRef.listAll().addOnSuccessListener(new OnSuccessListener<ListResult>() {
             @Override
             public void onSuccess(ListResult listResult) {
+                ArrayList<ChildModel> arrayList = new ArrayList<>();
+
                 for (StorageReference prefix : listResult.getPrefixes()) {
                     //Log.i("tttA", prefix.getName());
+
                     prefix.listAll().addOnSuccessListener(new OnSuccessListener<ListResult>() {
                         @Override
                         public void onSuccess(ListResult listResult) {
-
                             for (StorageReference prefix : listResult.getPrefixes()){
 
 //                                Log.i("tttI", prefix.getName());
@@ -101,7 +101,8 @@ public class ParentRecyclerViewAdapter extends RecyclerView.Adapter<ParentRecycl
                             }
                         }
                     });
-                    arrayList.clear();
+
+
                 }
             }
         });
