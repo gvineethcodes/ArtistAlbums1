@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "28870864630",
+    "project_id": "recyclerviewinsiderecycl-d2601",
+    "storage_bucket": "recyclerviewinsiderecycl-d2601.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:28870864630:android:072c5ce4cb9b3bf98b86d7",
+        "android_client_info": {
+          "package_name": "com.example.recyclerviewinsiderecyclerview"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "28870864630-f2b613gebdqhfn5o2satrgu44mjdl0hd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAS3E1RfE961w1cHdrlCVcFzLJxBK7g-vA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "28870864630-f2b613gebdqhfn5o2satrgu44mjdl0hd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:28870864630:android:dfcb9f4f1c518d868b86d7",
+        "android_client_info": {
+          "package_name": "kim.nested.recyclerview"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "28870864630-f2b613gebdqhfn5o2satrgu44mjdl0hd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAS3E1RfE961w1cHdrlCVcFzLJxBK7g-vA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "28870864630-f2b613gebdqhfn5o2satrgu44mjdl0hd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
