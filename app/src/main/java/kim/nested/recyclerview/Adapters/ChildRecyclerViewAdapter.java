@@ -87,7 +87,7 @@ public class ChildRecyclerViewAdapter extends RecyclerView.Adapter<ChildRecycler
             public void onClick(View view) {
                 ChildModel currentItem = childModelArrayList.get(holder.getAdapterPosition());
 
-                Toast.makeText(cxt, currentItem.getMovieName(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(cxt, "pos "+currentItem.getMovieName(), Toast.LENGTH_SHORT).show();
             }
         });
 
