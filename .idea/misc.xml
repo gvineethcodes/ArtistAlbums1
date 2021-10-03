@@ -4,6 +4,8 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Users/o3gvk/Downloads/Nested_RecyclerView-master/Nested_RecyclerView-master/app/src/main/res/layout/activity_main.xml" value="0.20416666666666666" />
+        <entry key="..\:/Users/o3gvk/Downloads/Nested_RecyclerView-master/Nested_RecyclerView-master/app/src/main/res/layout/child_recyclerview_items.xml" value="0.20416666666666666" />
+        <entry key="..\:/Users/o3gvk/Downloads/Nested_RecyclerView-master/Nested_RecyclerView-master/app/src/main/res/layout/parent_recyclerview_items.xml" value="0.20416666666666666" />
       </map>
     </option>
   </component>

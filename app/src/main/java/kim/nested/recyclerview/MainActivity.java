@@ -20,10 +20,7 @@ import kim.nested.recyclerview.Adapters.ParentRecyclerViewAdapter;
 import kim.nested.recyclerview.Models.ParentModel;
 
 public class MainActivity extends AppCompatActivity {
-    private RecyclerView parentRecyclerView;
     private RecyclerView.Adapter ParentAdapter;
-    ArrayList<ParentModel> parentModelArrayList = new ArrayList<>();
-    private RecyclerView.LayoutManager parentLayoutManager;
     StorageReference mStorageRef;
 
 
@@ -32,21 +29,27 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        ArrayList<ParentModel> parentModelArrayList = new ArrayList<>();
+
+        RecyclerView parentRecyclerView = findViewById(R.id.Parent_recyclerView);
+        RecyclerView.LayoutManager parentLayoutManager = new LinearLayoutManager(MainActivity.this);
+        parentRecyclerView.setLayoutManager(parentLayoutManager);
+        ParentAdapter = new ParentRecyclerViewAdapter(parentModelArrayList, MainActivity.this);
+        parentRecyclerView.setAdapter(ParentAdapter);
+
         mStorageRef = FirebaseStorage.getInstance().getReference();
 
         mStorageRef.listAll()
                 .addOnSuccessListener(new OnSuccessListener<ListResult>() {
+
                     @Override
                     public void onSuccess(ListResult listResult) {
                         for (StorageReference prefix : listResult.getPrefixes()) {
                             parentModelArrayList.add(new ParentModel(prefix.getName()));
                         }
-                        parentRecyclerView = findViewById(R.id.Parent_recyclerView);
-                        parentRecyclerView.setHasFixedSize(true);
-                        parentLayoutManager = new LinearLayoutManager(MainActivity.this);
-                        ParentAdapter = new ParentRecyclerViewAdapter(parentModelArrayList, MainActivity.this);
-                        parentRecyclerView.setLayoutManager(parentLayoutManager);
-                        parentRecyclerView.setAdapter(ParentAdapter);
+//                        ParentAdapter = new ParentRecyclerViewAdapter(parentModelArrayList, MainActivity.this);
+//                        parentRecyclerView.setAdapter(ParentAdapter);
+//                        parentRecyclerView.setHasFixedSize(true);
                         ParentAdapter.notifyDataSetChanged();
                     }
                 })

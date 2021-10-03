@@ -1,6 +1,7 @@
 package kim.nested.recyclerview.Adapters;
 
 import android.content.Context;
+import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -88,15 +89,33 @@ public class ParentRecyclerViewAdapter extends RecyclerView.Adapter<ParentRecycl
                     prefix.listAll().addOnSuccessListener(new OnSuccessListener<ListResult>() {
                         @Override
                         public void onSuccess(ListResult listResult) {
-                            for (StorageReference prefix : listResult.getPrefixes()){
+                            for (StorageReference item : listResult.getItems()){
 
 //                                Log.i("tttI", prefix.getName());
 //                                Log.i("tttP", ""+prefix.getPath());
 //                                Log.i("tttS", ""+prefix.getPath().subSequence((prefix.getPath()).indexOf("Album "),(prefix.getPath()).indexOf("/https")));
-                                arrayList.add(new ChildModel((prefix.getName()).replaceAll("[*]","/"),
-                                        ""+prefix.getPath().subSequence((prefix.getPath()).indexOf("Album "),(prefix.getPath()).indexOf("/https"))));
-                                childRecyclerViewAdapter = new ChildRecyclerViewAdapter(arrayList,holder.childRecyclerView.getContext());
-                                holder.childRecyclerView.setAdapter(childRecyclerViewAdapter);
+//                                arrayList.add(new ChildModel((prefix.getName()).replaceAll("[*]","/"),
+//                                        ""+prefix.getPath().subSequence((prefix.getPath()).indexOf("Album "),(prefix.getPath()).indexOf("/https"))));
+
+                                if (item.getName().endsWith(".png")){
+                                    Log.i("tttS", ""+item.getDownloadUrl());
+//                                    Log.i("tttI", ""+item.getPath().substring(s+1,e));
+//                                    Log.i("tttS", ""+item.getPath().indexOf("/",item.getPath().indexOf("/")+1));
+
+                                    int s = item.getPath().indexOf("/",item.getPath().indexOf("/")+1);
+                                    int e = item.getPath().indexOf("/",(item.getPath().indexOf("/",item.getPath().indexOf("/")+1))+1);
+
+                                    item.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                        @Override
+                                        public void onSuccess(Uri uri) {
+                                            arrayList.add(new ChildModel(""+uri,""+item.getPath().substring(s+1,e)));
+                                            childRecyclerViewAdapter = new ChildRecyclerViewAdapter(arrayList,holder.childRecyclerView.getContext());
+                                            holder.childRecyclerView.setAdapter(childRecyclerViewAdapter);
+                                        }
+                                    });
+
+
+                                }
 
                             }
                         }
