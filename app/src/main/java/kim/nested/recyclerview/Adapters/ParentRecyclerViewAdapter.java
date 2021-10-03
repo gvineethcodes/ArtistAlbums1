@@ -82,14 +82,16 @@ public class ParentRecyclerViewAdapter extends RecyclerView.Adapter<ParentRecycl
             @Override
             public void onSuccess(ListResult listResult) {
                 ArrayList<ChildModel> arrayList = new ArrayList<>();
+                //Log.i("tttAr", prefix.getName());
 
                 for (StorageReference prefix : listResult.getPrefixes()) {
-                    //Log.i("tttA", prefix.getName());
+//                    Log.i("tttA", prefix.getName());
 
                     prefix.listAll().addOnSuccessListener(new OnSuccessListener<ListResult>() {
                         @Override
                         public void onSuccess(ListResult listResult) {
                             for (StorageReference item : listResult.getItems()){
+//                                Log.i("tttT", item.getName());
 
 //                                Log.i("tttI", prefix.getName());
 //                                Log.i("tttP", ""+prefix.getPath());
@@ -97,8 +99,8 @@ public class ParentRecyclerViewAdapter extends RecyclerView.Adapter<ParentRecycl
 //                                arrayList.add(new ChildModel((prefix.getName()).replaceAll("[*]","/"),
 //                                        ""+prefix.getPath().subSequence((prefix.getPath()).indexOf("Album "),(prefix.getPath()).indexOf("/https"))));
 
-                                if (item.getName().endsWith(".png")){
-                                    Log.i("tttS", ""+item.getDownloadUrl());
+                                if (item.getName().endsWith(".png") || item.getName().endsWith(".jpg") ){
+//                                    Log.i("tttS", ""+item.getDownloadUrl());
 //                                    Log.i("tttI", ""+item.getPath().substring(s+1,e));
 //                                    Log.i("tttS", ""+item.getPath().indexOf("/",item.getPath().indexOf("/")+1));
 

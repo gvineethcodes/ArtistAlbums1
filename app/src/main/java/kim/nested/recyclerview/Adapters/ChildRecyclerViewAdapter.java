@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -80,6 +81,15 @@ public class ChildRecyclerViewAdapter extends RecyclerView.Adapter<ChildRecycler
 //        holder.heroImage.setImageURI(Uri.parse(currentItem.getHeroImage()));
 
         holder.movieName.setText(currentItem.getMovieName());
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ChildModel currentItem = childModelArrayList.get(holder.getAdapterPosition());
+
+                Toast.makeText(cxt, currentItem.getMovieName(), Toast.LENGTH_SHORT).show();
+            }
+        });
 
     }
 
