@@ -1,6 +1,7 @@
 package kim.nested.recyclerview.Adapters;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,6 +21,8 @@ import com.google.firebase.storage.ListResult;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 import kim.nested.recyclerview.MainActivity;
 import kim.nested.recyclerview.Models.ChildModel;
@@ -30,10 +33,10 @@ public class ParentRecyclerViewAdapter extends RecyclerView.Adapter<ParentRecycl
     private ArrayList<ParentModel> parentModelArrayList;
     public Context cxt;
     StorageReference mStorageRef;
-    String album=" ",image=" ",name=" ";
     ChildRecyclerViewAdapter childRecyclerViewAdapter;
     private RecyclerView.LayoutManager childLM;
-
+    SharedPreferences sharedpreferences;
+    SharedPreferences.Editor editor;
 
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
@@ -53,6 +56,8 @@ public class ParentRecyclerViewAdapter extends RecyclerView.Adapter<ParentRecycl
         this.parentModelArrayList = exampleList;
         this.cxt = context;
 
+        sharedpreferences = cxt.getSharedPreferences("" + R.string.app_name, Context.MODE_PRIVATE);
+        editor = sharedpreferences.edit();
     }
 
     @Override
@@ -68,20 +73,26 @@ public class ParentRecyclerViewAdapter extends RecyclerView.Adapter<ParentRecycl
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-
-        ParentModel currentItem = parentModelArrayList.get(position);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(cxt, LinearLayoutManager.HORIZONTAL, false);
         holder.childRecyclerView.setLayoutManager(layoutManager);
-        holder.childRecyclerView.setHasFixedSize(true);
+        ArrayList<ChildModel> arrayList = new ArrayList<>();
+        childRecyclerViewAdapter = new ChildRecyclerViewAdapter(arrayList,holder.childRecyclerView.getContext());
+        holder.childRecyclerView.setAdapter(childRecyclerViewAdapter);
+        //holder.childRecyclerView.setHasFixedSize(true);
+        String name=" ";
 
+        ParentModel currentItem = parentModelArrayList.get(position);
         name=currentItem.movieCategory();
         holder.category.setText(name);
 
         mStorageRef = FirebaseStorage.getInstance().getReference(name);
+        String finalName = name;
         mStorageRef.listAll().addOnSuccessListener(new OnSuccessListener<ListResult>() {
             @Override
             public void onSuccess(ListResult listResult) {
-                ArrayList<ChildModel> arrayList = new ArrayList<>();
+                Set<String> set = new HashSet<String>();
+
+//                ArrayList<ChildModel> arrayList = new ArrayList<>();
                 //Log.i("tttAr", prefix.getName());
 
                 for (StorageReference prefix : listResult.getPrefixes()) {
@@ -100,30 +111,42 @@ public class ParentRecyclerViewAdapter extends RecyclerView.Adapter<ParentRecycl
 //                                        ""+prefix.getPath().subSequence((prefix.getPath()).indexOf("Album "),(prefix.getPath()).indexOf("/https"))));
 
                                 if (item.getName().endsWith(".png") || item.getName().endsWith(".jpg") ){
-//                                    Log.i("tttS", ""+item.getDownloadUrl());
-//                                    Log.i("tttI", ""+item.getPath().substring(s+1,e));
-//                                    Log.i("tttS", ""+item.getPath().indexOf("/",item.getPath().indexOf("/")+1));
-
                                     int s = item.getPath().indexOf("/",item.getPath().indexOf("/")+1);
                                     int e = item.getPath().indexOf("/",(item.getPath().indexOf("/",item.getPath().indexOf("/")+1))+1);
+
+//                                    Log.i("tttS", ""+item.getPath().substring(1,s));
+//                                    Log.i("tttI", ""+item.getPath().substring(s+1,e));
+//                                    Log.i("tttS", ""+item.getPath().indexOf("/",item.getPath().indexOf("/")+1));
 
                                     item.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                                         @Override
                                         public void onSuccess(Uri uri) {
-                                            arrayList.add(new ChildModel(""+uri,""+item.getPath().substring(s+1,e)));
+                                            arrayList.add(new ChildModel(""+uri,""+item.getPath().substring(s+1,e),item.getPath().substring(1,s)));
                                             childRecyclerViewAdapter = new ChildRecyclerViewAdapter(arrayList,holder.childRecyclerView.getContext());
                                             holder.childRecyclerView.setAdapter(childRecyclerViewAdapter);
                                         }
                                     });
 
 
+                                }else {
+                                    set.add(item.getName());
+                                    item.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                        @Override
+                                        public void onSuccess(Uri uri) {
+                                            editor.putString(finalName +"/"+prefix.getName()+"/"+item.getName(), ""+uri);
+                                            editor.apply();
+                                        }
+                                    });
                                 }
 
                             }
+
+//                            Log.i("tttS", finalName +" "+prefix.getPath().substring(1,prefix.getPath().indexOf("/",prefix.getPath().indexOf("/")+1)));
+                            editor.putStringSet(finalName +"/"+prefix.getName(), set);
+                            editor.apply();
+                            set.clear();
                         }
                     });
-
-
                 }
             }
         });
@@ -264,9 +287,6 @@ public class ParentRecyclerViewAdapter extends RecyclerView.Adapter<ParentRecycl
 //            arrayList.add(new ChildModel( R.drawable.hollywood1,"Movie Name"));
 //            arrayList.add(new ChildModel(R.drawable.bestofoscar6,"Movie Name"));
 //        }
-
-
-
 
         }
 

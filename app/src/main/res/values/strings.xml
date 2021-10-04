@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Nested RecyclerView</string>
+    <string name="app_name">Artist Albums</string>
     <string name="img">img</string>
     <string name="category">Category</string>
 </resources>

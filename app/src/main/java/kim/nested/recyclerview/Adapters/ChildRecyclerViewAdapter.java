@@ -1,6 +1,8 @@
 package kim.nested.recyclerview.Adapters;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -20,12 +22,16 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
+import kim.nested.recyclerview.MainActivity;
+import kim.nested.recyclerview.MainActivity2;
 import kim.nested.recyclerview.Models.ChildModel;
 import kim.nested.recyclerview.R;
 
 public class ChildRecyclerViewAdapter extends RecyclerView.Adapter<ChildRecyclerViewAdapter.MyViewHolder> {
     public ArrayList<ChildModel> childModelArrayList;
     Context cxt;
+    SharedPreferences sharedpreferences;
+    SharedPreferences.Editor editor;
 
     public static class MyViewHolder extends RecyclerView.ViewHolder{
         public ImageView heroImage;
@@ -42,6 +48,9 @@ public class ChildRecyclerViewAdapter extends RecyclerView.Adapter<ChildRecycler
     public ChildRecyclerViewAdapter(ArrayList<ChildModel> arrayList, Context mContext) {
         this.cxt = mContext;
         this.childModelArrayList = arrayList;
+
+        sharedpreferences = cxt.getSharedPreferences("" + R.string.app_name, Context.MODE_PRIVATE);
+        editor = sharedpreferences.edit();
     }
 
     @Override
@@ -74,7 +83,7 @@ public class ChildRecyclerViewAdapter extends RecyclerView.Adapter<ChildRecycler
 //        } catch (Exception e) {
 //            e.printStackTrace();
 //        }
-        Picasso.with(cxt)
+        Picasso.get()
                 .load(Uri.parse(currentItem.getHeroImage()))
                 .into(holder.heroImage);
 //        holder.heroImage.setImageResource(currentItem.getHeroImage());
@@ -86,16 +95,22 @@ public class ChildRecyclerViewAdapter extends RecyclerView.Adapter<ChildRecycler
             @Override
             public void onClick(View view) {
                 ChildModel currentItem = childModelArrayList.get(holder.getAdapterPosition());
-
-                Toast.makeText(cxt, "pos "+currentItem.getMovieName(), Toast.LENGTH_SHORT).show();
+                cxt.startActivity(new Intent(cxt, MainActivity2.class));
+                editor.putString("list", currentItem.getArtist()+"/"+currentItem.getMovieName());
+                editor.apply();
+                Toast.makeText(cxt, currentItem.getArtist()+currentItem.getMovieName(), Toast.LENGTH_SHORT).show();
             }
         });
 
     }
 
-
     @Override
     public int getItemCount() {
         return childModelArrayList.size();
+    }
+
+    private void keepString(String keyStr1, String valueStr1) {
+        editor.putString(keyStr1, valueStr1);
+        editor.apply();
     }
 }
