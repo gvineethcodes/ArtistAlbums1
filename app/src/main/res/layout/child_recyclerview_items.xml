@@ -7,25 +7,27 @@
     android:layout_height="wrap_content"
     app:ignore="NamespaceTypo"
     android:layout_marginLeft="16dp">
+
     <androidx.cardview.widget.CardView
-        android:layout_width="170dp"
-        android:layout_height="170dp"
+        android:layout_width="152dp"
+        android:layout_height="152dp"
         app:cardCornerRadius="7dp"
         app:cardElevation="5dp">
+
         <ImageView
             android:id="@+id/hero_image"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:contentDescription="@string/img" />
+            android:contentDescription="@string/img"
+            app:layout_constraintTop_toTopOf="parent" />
     </androidx.cardview.widget.CardView>
 
     <TextView
+        android:id="@+id/movie_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/white"
-        android:textSize="16sp"
-        android:id="@+id/movie_name"
+        android:layout_gravity="center"
         android:layout_marginTop="5dp"
-        android:layout_gravity="center" />
+        android:textColor="@color/white"
+        android:textSize="16sp" />
 </LinearLayout>

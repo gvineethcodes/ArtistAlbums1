@@ -2,4 +2,9 @@
     <string name="app_name">Artist Albums</string>
     <string name="img">img</string>
     <string name="category">Category</string>
+    <string name="prev">prev</string>
+    <string name="play">play</string>
+    <string name="next">next</string>
+    <string name="textview">0 : 0 / 0 : 0\nPlaying Song</string>
+    <string name="album">TextView</string>
 </resources>

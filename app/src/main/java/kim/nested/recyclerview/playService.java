@@ -9,23 +9,37 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.media.AudioAttributes;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Build;
 import android.os.IBinder;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Set;
 
 
@@ -37,7 +51,6 @@ public class playService extends Service {
     public static MediaPlayer mediaPlayer = null;
     MediaSessionCompat mediaSessionCompat;
     NotificationManager notificationManager;
-    public static String playingSubject = " ", playingTopic = " ", subject = " ", topic = " ";
 
     @Nullable
     @Override
@@ -75,7 +88,15 @@ public class playService extends Service {
                     case "playPause":
                         playpause(this);
                         break;
-
+                    case "prev":
+                        prev(this);
+                        break;
+                    case "next":
+                        next(this);
+                        break;
+                    case "play":
+                        play(this);
+                        break;
                 }
             }
 
@@ -86,9 +107,8 @@ public class playService extends Service {
         return START_STICKY;
     }
 
-
     public void playpause(Context context) {
-        if (mediaPlayer != null && sharedpreferences.getString("play", " ").equals(playingTopic)) {
+        if (mediaPlayer != null && sharedpreferences.getString("play", " ").equals(sharedpreferences.getString("playTopic", " "))) {
             if (mediaPlayer.isPlaying()) {
                 mediaPlayer.pause();
                 Intent Bintent = new Intent("UI");
@@ -106,33 +126,33 @@ public class playService extends Service {
                 showNotification(context, true, R.drawable.ic_baseline_pause_24);
             }
 
-        } else play(context);
+        } else {
+            play(context);
+        }
     }
 
     public void play(Context context) {
 
-        Set<String> set = sharedpreferences.getStringSet(sharedpreferences.getString("list"," "), null);
-
-        ArrayList<String> tutorials = new ArrayList<>(set);
-
         Intent Bintent = new Intent("UI");
-        Bintent.putExtra("key", "disableBtn");
+        Bintent.putExtra("key", "playImg");
         LocalBroadcastManager.getInstance(this).sendBroadcast(Bintent);
 
         if (mediaPlayer != null) {
             mediaPlayer.release();
             mediaPlayer = null;
         }
-        topic = sharedpreferences.getString("play", " ");
-        String[] splitStr = topic.split("/");
-        Log.i("ttt",""+ tutorials.indexOf(splitStr[2]));
-
-        //Log.i("ttts",splitStr[0]+" "+splitStr[1]+" "+splitStr[2]);
-        keepString("text", "preparing " + splitStr[2]);
-        subject = splitStr[0]+"/"+splitStr[1] ;
-        showNotification(context, false, R.drawable.ic_baseline_play_arrow_24);
 
         try {
+            if(sharedpreferences.getString(sharedpreferences.getString("play", "/None/None/None"), "/None/None/None").contains("http")) {
+                String[] splitStr = sharedpreferences.getString("play", "/None/None/None").split("/");
+                //Log.i("ttt",""+ tutorials.indexOf(splitStr[2]));
+
+                //Log.i("ttts",splitStr[0]+" "+splitStr[1]+" "+splitStr[2]);
+                keepString("topic",splitStr[2]);
+                keepString("subject",splitStr[0]+"/"+splitStr[1] );
+                keepString("text", "preparing " +sharedpreferences.getString("topic"," ") );
+
+                showNotification(context, false, R.drawable.ic_baseline_play_arrow_24);
                 mediaPlayer = new MediaPlayer();
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     mediaPlayer.setAudioAttributes(
@@ -142,18 +162,19 @@ public class playService extends Service {
                                     .build()
                     );
                 }
-                mediaPlayer.setDataSource(sharedpreferences.getString(topic, " "));
+                mediaPlayer.setDataSource(sharedpreferences.getString(sharedpreferences.getString("play", "/None/None/None"), "/None/None/None"));
                 mediaPlayer.prepareAsync();
+
 
                 mediaPlayer.setOnPreparedListener(mediaPlayer -> {
                     mediaPlayer.start();
                     //playingSubject = subject;
-                    playingTopic = topic;
+                    keepString("playTopic", sharedpreferences.getString("play", ""));
 
-                    Bintent.putExtra("key", "EnablePauseMax");
+                    Bintent.putExtra("key", "PauseMax");
                     LocalBroadcastManager.getInstance(this).sendBroadcast(Bintent);
 
-                    keepString("text", topic);
+                    keepString("text", sharedpreferences.getString("topic", ""));
                     showNotification(context, true, R.drawable.ic_baseline_pause_24);
 
                 });
@@ -167,14 +188,16 @@ public class playService extends Service {
                 });
                 mediaPlayer.setOnErrorListener((mediaPlayer, i, i1) -> {
 
-                    Bintent.putExtra("key", "enablePlay");
+                    Bintent.putExtra("key", "playImg");
                     LocalBroadcastManager.getInstance(this).sendBroadcast(Bintent);
 
-                    keepString("text", "Try again " + topic);
+                    keepString("text", "Try again " + sharedpreferences.getString("topic", ""));
                     showNotification(context, true, R.drawable.ic_baseline_play_arrow_24);
 
                     return false;
                 });
+
+            }
 
             } catch (IOException e) {
                 keepString("text", e.getMessage());
@@ -182,14 +205,85 @@ public class playService extends Service {
 
     }
 
+    public void prev(Context context) {
+        Set<String> set = sharedpreferences.getStringSet(sharedpreferences.getString("list"," "), null);
+        if(set!=null) {
+            ArrayList<String> tutorials = new ArrayList<>(set);
+            Collections.sort(tutorials);
+            String[] splitStr = sharedpreferences.getString("play", "/None/None/None").split("/");
+            //Log.i("ttt", "" + tutorials.indexOf(splitStr[2]));
+            int prev = tutorials.indexOf(splitStr[2]) - 1;
+            if (prev > -1) {
+                //keepInt("spinner2", prev);
+                keepString("play", splitStr[0] + "/" + splitStr[1] + "/" + tutorials.get(prev));
+                play(context);
+            }
+        }
+    }
+
+    public void next(Context context) {
+        Set<String> set = sharedpreferences.getStringSet(sharedpreferences.getString("list"," "), null);
+        if(set!=null) {
+            ArrayList<String> tutorials = new ArrayList<>(set);
+            Collections.sort(tutorials);
+            String[] splitStr = sharedpreferences.getString("play", "/None/None/None").split("/");
+            //Log.i("ttt", "" + tutorials.indexOf(splitStr[2]));
+
+            int next = tutorials.indexOf(splitStr[2]) + 1;
+            if (next < tutorials.size()) {
+                keepString("play", splitStr[0] + "/" + splitStr[1] + "/" + tutorials.get(next));
+                play(context);
+            }
+        }
+    }
+
+    Bitmap img ;
+
     @SuppressLint("UnspecifiedImmutableFlag")
     public void showNotification(Context context, boolean showButtons, int playPause) {
-        Intent notificationIntent = new Intent(context, MainActivity.class);
+        Intent notificationIntent = new Intent(context, MainActivity2.class);
         PendingIntent contentIntent = PendingIntent.getActivity(context, 1, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         //subject = sharedpreferences.getString("subject", " ");
+        if (!showButtons) {
 
-        if (showButtons) {
+            img = null;
+
+            Notification notification = new NotificationCompat.Builder(context, "1")
+                    .setSmallIcon(R.mipmap.ic_launcher_foreground)
+                    .setContentTitle(sharedpreferences.getString("subject","None"))
+                    .setContentText(sharedpreferences.getString("text", " "))
+                    .setContentIntent(contentIntent)
+                    .setPriority(NotificationCompat.PRIORITY_LOW)
+                    .setOnlyAlertOnce(true)
+                    .build();
+
+            notificationManager.notify(1, notification);
+
+
+            Picasso.get().load(sharedpreferences.getString("img","")).into(new Target() {
+                @Override
+                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                    try {
+                        img = bitmap;
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }
+                @Override
+                public void onBitmapFailed(Exception e, Drawable errorDrawable) {
+
+                }
+
+                @Override
+                public void onPrepareLoad(Drawable placeHolderDrawable) {
+                    // place holder to set here
+                }
+            });
+
+
+        } else {
+
             Intent playI, prevI, nextI;
             PendingIntent playPI, prevPI, nextPI;
             playI = new Intent(context, playService.class).setAction("playPause");
@@ -200,10 +294,46 @@ public class playService extends Service {
             prevPI = PendingIntent.getService(context, 3, prevI, PendingIntent.FLAG_UPDATE_CURRENT);
             nextPI = PendingIntent.getService(context, 4, nextI, PendingIntent.FLAG_UPDATE_CURRENT);
 
-            Notification notification = new NotificationCompat.Builder(context, "1")
-                    .setSmallIcon(R.drawable.ic_launcher_foreground)
-                    .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_launcher_foreground))
-                    .setContentTitle(subject)
+/*
+            final Bitmap[] bitmap = {null};
+
+            Glide.with(getApplicationContext())
+                    .asBitmap()
+                    .load(sharedpreferences.getString("img",""))
+                    .into(new CustomTarget<Bitmap>() {
+                        @Override
+                        public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+
+                            bitmap[0] = resource;
+                            // TODO Do some work: pass this bitmap
+                            Notification notification = null;
+                            notification = new NotificationCompat.Builder(context, "1")
+                                    .setSmallIcon(R.mipmap.ic_launcher_foreground)
+                                    .setLargeIcon(bitmap[0])
+                                    .setContentTitle(sharedpreferences.getString("subject","None"))
+                                    .setContentText(sharedpreferences.getString("text", " "))
+                                    .setContentIntent(contentIntent)
+                                    .addAction(R.drawable.ic_baseline_skip_previous_24, "prev", prevPI)
+                                    .addAction(playPause, "play", playPI)
+                                    .addAction(R.drawable.ic_baseline_skip_next_24, "next", nextPI)
+                                    .setStyle(new androidx.media.app.NotificationCompat.MediaStyle()
+                                            .setMediaSession(mediaSessionCompat.getSessionToken()))
+                                    .setPriority(NotificationCompat.PRIORITY_LOW)
+                                    .setOnlyAlertOnce(true)
+                                    .build();
+
+                            notificationManager.notify(1, notification);                        }
+
+                        @Override
+                        public void onLoadCleared(@Nullable Drawable placeholder) {
+                        }
+                    });
+*/
+            Notification notification = null;
+            notification = new NotificationCompat.Builder(context, "1")
+                    .setSmallIcon(R.mipmap.ic_launcher_foreground)
+                    .setLargeIcon(img)
+                    .setContentTitle(sharedpreferences.getString("subject","None"))
                     .setContentText(sharedpreferences.getString("text", " "))
                     .setContentIntent(contentIntent)
                     .addAction(R.drawable.ic_baseline_skip_previous_24, "prev", prevPI)
@@ -217,18 +347,6 @@ public class playService extends Service {
 
             notificationManager.notify(1, notification);
 
-        } else {
-
-            Notification notification = new NotificationCompat.Builder(context, "1")
-                    .setSmallIcon(R.drawable.ic_launcher_foreground)
-                    .setContentTitle(subject)
-                    .setContentText(sharedpreferences.getString("text", " "))
-                    .setContentIntent(contentIntent)
-                    .setPriority(NotificationCompat.PRIORITY_LOW)
-                    .setOnlyAlertOnce(true)
-                    .build();
-
-            notificationManager.notify(1, notification);
         }
 
     }

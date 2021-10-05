@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.squareup.picasso.Picasso;
 
 import java.io.InputStream;
@@ -86,6 +87,9 @@ public class ChildRecyclerViewAdapter extends RecyclerView.Adapter<ChildRecycler
         Picasso.get()
                 .load(Uri.parse(currentItem.getHeroImage()))
                 .into(holder.heroImage);
+//        Glide.with(cxt)
+//                .load(Uri.parse(currentItem.getHeroImage()))
+//                .into(holder.heroImage);
 //        holder.heroImage.setImageResource(currentItem.getHeroImage());
 //        holder.heroImage.setImageURI(Uri.parse(currentItem.getHeroImage()));
 
@@ -95,10 +99,12 @@ public class ChildRecyclerViewAdapter extends RecyclerView.Adapter<ChildRecycler
             @Override
             public void onClick(View view) {
                 ChildModel currentItem = childModelArrayList.get(holder.getAdapterPosition());
+                keepString("list", currentItem.getArtist()+"/"+currentItem.getMovieName());
+                keepString("img", currentItem.getHeroImage());
+
                 cxt.startActivity(new Intent(cxt, MainActivity2.class));
-                editor.putString("list", currentItem.getArtist()+"/"+currentItem.getMovieName());
-                editor.apply();
-                Toast.makeText(cxt, currentItem.getArtist()+currentItem.getMovieName(), Toast.LENGTH_SHORT).show();
+
+                //Toast.makeText(cxt, currentItem.getArtist()+currentItem.getMovieName(), Toast.LENGTH_SHORT).show();
             }
         });
 

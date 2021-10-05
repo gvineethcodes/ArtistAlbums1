@@ -21,6 +21,7 @@ import com.google.firebase.storage.ListResult;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -37,7 +38,6 @@ public class ParentRecyclerViewAdapter extends RecyclerView.Adapter<ParentRecycl
     private RecyclerView.LayoutManager childLM;
     SharedPreferences sharedpreferences;
     SharedPreferences.Editor editor;
-
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView category;
@@ -73,8 +73,9 @@ public class ParentRecyclerViewAdapter extends RecyclerView.Adapter<ParentRecycl
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(cxt, LinearLayoutManager.HORIZONTAL, false);
-        holder.childRecyclerView.setLayoutManager(layoutManager);
+//        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(cxt, LinearLayoutManager.HORIZONTAL, false);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(cxt, LinearLayoutManager.HORIZONTAL, false);
+        holder.childRecyclerView.setLayoutManager(linearLayoutManager);
         ArrayList<ChildModel> arrayList = new ArrayList<>();
         childRecyclerViewAdapter = new ChildRecyclerViewAdapter(arrayList,holder.childRecyclerView.getContext());
         holder.childRecyclerView.setAdapter(childRecyclerViewAdapter);
@@ -97,7 +98,6 @@ public class ParentRecyclerViewAdapter extends RecyclerView.Adapter<ParentRecycl
 
                 for (StorageReference prefix : listResult.getPrefixes()) {
 //                    Log.i("tttA", prefix.getName());
-
                     prefix.listAll().addOnSuccessListener(new OnSuccessListener<ListResult>() {
                         @Override
                         public void onSuccess(ListResult listResult) {
@@ -124,26 +124,32 @@ public class ParentRecyclerViewAdapter extends RecyclerView.Adapter<ParentRecycl
                                             arrayList.add(new ChildModel(""+uri,""+item.getPath().substring(s+1,e),item.getPath().substring(1,s)));
                                             childRecyclerViewAdapter = new ChildRecyclerViewAdapter(arrayList,holder.childRecyclerView.getContext());
                                             holder.childRecyclerView.setAdapter(childRecyclerViewAdapter);
+                                            if(sharedpreferences.getString("11","11").equals("11")){
+                                                keepString("img",""+uri);
+                                                keepString("11","0");
+                                            }
                                         }
                                     });
-
-
                                 }else {
                                     set.add(item.getName());
                                     item.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                                         @Override
                                         public void onSuccess(Uri uri) {
-                                            editor.putString(finalName +"/"+prefix.getName()+"/"+item.getName(), ""+uri);
-                                            editor.apply();
+                                            keepString(finalName +"/"+prefix.getName()+"/"+item.getName(), ""+uri);
                                         }
                                     });
                                 }
-
                             }
-
 //                            Log.i("tttS", finalName +" "+prefix.getPath().substring(1,prefix.getPath().indexOf("/",prefix.getPath().indexOf("/")+1)));
-                            editor.putStringSet(finalName +"/"+prefix.getName(), set);
-                            editor.apply();
+                            keepStringSet(finalName +"/"+prefix.getName(), set);
+                            if(sharedpreferences.getString("1","1").equals("1")){
+                                Set<String> set1 = sharedpreferences.getStringSet(finalName +"/"+prefix.getName(), null);
+                                ArrayList<String> tutorials = new ArrayList<>(set1);
+                                Collections.sort(tutorials);
+                                keepString("play", finalName +"/"+prefix.getName()+"/"+tutorials.get(0));
+                                keepString("list", finalName +"/"+prefix.getName());
+                                keepString("1","0");
+                            }
                             set.clear();
                         }
                     });
@@ -289,5 +295,13 @@ public class ParentRecyclerViewAdapter extends RecyclerView.Adapter<ParentRecycl
 //        }
 
         }
+    private void keepString(String keyStr1, String valueStr1) {
+        editor.putString(keyStr1, valueStr1);
+        editor.apply();
+    }
+    private void keepStringSet(String keyStr1, Set<String> valueStr1) {
+        editor.putStringSet(keyStr1, valueStr1);
+        editor.apply();
+    }
 
 }

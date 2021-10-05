@@ -1,62 +1,33 @@
 {
   "project_info": {
-    "project_number": "28870864630",
-    "project_id": "recyclerviewinsiderecycl-d2601",
-    "storage_bucket": "recyclerviewinsiderecycl-d2601.appspot.com"
+    "project_number": "900989250226",
+    "project_id": "nested-recyclerview-ca293",
+    "storage_bucket": "nested-recyclerview-ca293.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:28870864630:android:072c5ce4cb9b3bf98b86d7",
-        "android_client_info": {
-          "package_name": "com.example.recyclerviewinsiderecyclerview"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "28870864630-f2b613gebdqhfn5o2satrgu44mjdl0hd.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyAS3E1RfE961w1cHdrlCVcFzLJxBK7g-vA"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "28870864630-f2b613gebdqhfn5o2satrgu44mjdl0hd.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:28870864630:android:dfcb9f4f1c518d868b86d7",
+        "mobilesdk_app_id": "1:900989250226:android:e6ee83fa2c48fdf89a37ab",
         "android_client_info": {
           "package_name": "kim.nested.recyclerview"
         }
       },
       "oauth_client": [
         {
-          "client_id": "28870864630-f2b613gebdqhfn5o2satrgu44mjdl0hd.apps.googleusercontent.com",
+          "client_id": "900989250226-d0o1cvclda9kf7sva4knja3mjmvs1kl7.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAS3E1RfE961w1cHdrlCVcFzLJxBK7g-vA"
+          "current_key": "AIzaSyBFs4WJmkGhj-TCRm-RxIqjNV1cDoXU94w"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "28870864630-f2b613gebdqhfn5o2satrgu44mjdl0hd.apps.googleusercontent.com",
+              "client_id": "900989250226-d0o1cvclda9kf7sva4knja3mjmvs1kl7.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
