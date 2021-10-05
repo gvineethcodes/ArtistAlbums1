@@ -25,9 +25,6 @@ import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.target.CustomTarget;
-import com.bumptech.glide.request.transition.Transition;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
@@ -250,7 +247,7 @@ public class playService extends Service {
             img = null;
 
             Notification notification = new NotificationCompat.Builder(context, "1")
-                    .setSmallIcon(R.mipmap.ic_launcher_foreground)
+                    .setSmallIcon(android.R.drawable.stat_sys_headset)
                     .setContentTitle(sharedpreferences.getString("subject","None"))
                     .setContentText(sharedpreferences.getString("text", " "))
                     .setContentIntent(contentIntent)
@@ -294,44 +291,9 @@ public class playService extends Service {
             prevPI = PendingIntent.getService(context, 3, prevI, PendingIntent.FLAG_UPDATE_CURRENT);
             nextPI = PendingIntent.getService(context, 4, nextI, PendingIntent.FLAG_UPDATE_CURRENT);
 
-/*
-            final Bitmap[] bitmap = {null};
-
-            Glide.with(getApplicationContext())
-                    .asBitmap()
-                    .load(sharedpreferences.getString("img",""))
-                    .into(new CustomTarget<Bitmap>() {
-                        @Override
-                        public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-
-                            bitmap[0] = resource;
-                            // TODO Do some work: pass this bitmap
-                            Notification notification = null;
-                            notification = new NotificationCompat.Builder(context, "1")
-                                    .setSmallIcon(R.mipmap.ic_launcher_foreground)
-                                    .setLargeIcon(bitmap[0])
-                                    .setContentTitle(sharedpreferences.getString("subject","None"))
-                                    .setContentText(sharedpreferences.getString("text", " "))
-                                    .setContentIntent(contentIntent)
-                                    .addAction(R.drawable.ic_baseline_skip_previous_24, "prev", prevPI)
-                                    .addAction(playPause, "play", playPI)
-                                    .addAction(R.drawable.ic_baseline_skip_next_24, "next", nextPI)
-                                    .setStyle(new androidx.media.app.NotificationCompat.MediaStyle()
-                                            .setMediaSession(mediaSessionCompat.getSessionToken()))
-                                    .setPriority(NotificationCompat.PRIORITY_LOW)
-                                    .setOnlyAlertOnce(true)
-                                    .build();
-
-                            notificationManager.notify(1, notification);                        }
-
-                        @Override
-                        public void onLoadCleared(@Nullable Drawable placeholder) {
-                        }
-                    });
-*/
             Notification notification = null;
             notification = new NotificationCompat.Builder(context, "1")
-                    .setSmallIcon(R.mipmap.ic_launcher_foreground)
+                    .setSmallIcon(android.R.drawable.stat_sys_headset)
                     .setLargeIcon(img)
                     .setContentTitle(sharedpreferences.getString("subject","None"))
                     .setContentText(sharedpreferences.getString("text", " "))
