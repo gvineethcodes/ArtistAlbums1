@@ -124,10 +124,8 @@ public class ParentRecyclerViewAdapter extends RecyclerView.Adapter<ParentRecycl
                                             arrayList.add(new ChildModel(""+uri,""+item.getPath().substring(s+1,e),item.getPath().substring(1,s)));
                                             childRecyclerViewAdapter = new ChildRecyclerViewAdapter(arrayList,holder.childRecyclerView.getContext());
                                             holder.childRecyclerView.setAdapter(childRecyclerViewAdapter);
-                                            if(sharedpreferences.getString("11","11").equals("11")){
-                                                keepString("img",""+uri);
-                                                keepString("11","0");
-                                            }
+                                            keepString(finalName +"/"+prefix.getName()+"/image",""+uri);
+//
                                         }
                                     });
                                 }else {

@@ -147,6 +147,7 @@ public class playService extends Service {
                 //Log.i("ttts",splitStr[0]+" "+splitStr[1]+" "+splitStr[2]);
                 keepString("topic",splitStr[2]);
                 keepString("subject",splitStr[0]+"/"+splitStr[1] );
+                keepString("img",sharedpreferences.getString(sharedpreferences.getString("subject"," ")+"/image"," "));
                 keepString("text", "preparing " +sharedpreferences.getString("topic"," ") );
 
                 showNotification(context, false, R.drawable.ic_baseline_play_arrow_24);
@@ -166,12 +167,12 @@ public class playService extends Service {
                 mediaPlayer.setOnPreparedListener(mediaPlayer -> {
                     mediaPlayer.start();
                     //playingSubject = subject;
-                    keepString("playTopic", sharedpreferences.getString("play", ""));
+                    keepString("playTopic", sharedpreferences.getString("play", " "));
 
                     Bintent.putExtra("key", "PauseMax");
                     LocalBroadcastManager.getInstance(this).sendBroadcast(Bintent);
 
-                    keepString("text", sharedpreferences.getString("topic", ""));
+                    keepString("text", sharedpreferences.getString("topic", " "));
                     showNotification(context, true, R.drawable.ic_baseline_pause_24);
 
                 });
@@ -258,7 +259,7 @@ public class playService extends Service {
             notificationManager.notify(1, notification);
 
 
-            Picasso.get().load(sharedpreferences.getString("img","")).into(new Target() {
+            Picasso.get().load(sharedpreferences.getString("img"," ")).into(new Target() {
                 @Override
                 public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
                     try {
